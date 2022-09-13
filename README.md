@@ -17,3 +17,21 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+#### Order State Machine
+  - statuses: [`:initiated`, `:confirmed`, `:processing`, `:ready`, `:rejected`, `:canceled`]
+  - transistions:
+    [
+      `:initiated` ->
+        `confirmed:` "Order is acknowledged/accepted by restaurant"
+        `rejected:` "Order is rejected by restaurant"
+        `canceled:` "Order is canceled by customer"
+      `:confirmed` ->
+        `processing:` "Order is being prepared by restaurant"
+        `canceled:` "Order is canceled by customer"
+      `:processing` ->
+        `ready:` "Order has stated ready for pickup"
+        `canceled:` "Order is canceled by customer with payment"
+      `:ready` -> `terminal`
+      `:rejected` -> `terminal`
+      `:canceled` -> `terminal`
