@@ -35,3 +35,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
       `:ready` -> `terminal`
       `:rejected` -> `terminal`
       `:canceled` -> `terminal`
+
+#### Creating schemas
+mix phx.gen.live Restaurants Restaurant restaurants name:string logo:string items:map
+mix phx.gen.live Orders Order orders name:string address:string restaurant:references:restaurants item:integer status:string

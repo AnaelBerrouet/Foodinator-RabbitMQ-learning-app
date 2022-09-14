@@ -1,0 +1,36 @@
+<h1>Show Restaurant</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.restaurant_show_path(@socket, :show, @restaurant)}>
+    <.live_component
+      module={FoodinatorWeb.RestaurantLive.FormComponent}
+      id={@restaurant.id}
+      title={@page_title}
+      action={@live_action}
+      restaurant={@restaurant}
+      return_to={Routes.restaurant_show_path(@socket, :show, @restaurant)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @restaurant.name %>
+  </li>
+
+  <li>
+    <strong>Logo:</strong>
+    <%= @restaurant.logo %>
+  </li>
+
+  <li>
+    <strong>Items:</strong>
+    <%= @restaurant.items %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.restaurant_show_path(@socket, :edit, @restaurant), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.restaurant_index_path(@socket, :index) %></span>

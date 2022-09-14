@@ -1,6 +1,7 @@
 defmodule FoodinatorWeb.Router do
   use FoodinatorWeb, :router
 
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -18,6 +19,14 @@ defmodule FoodinatorWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    live "/restaurants", RestaurantLive.Index, :index
+    live "/restaurants/new", RestaurantLive.Index, :new
+    live "/restaurants/:id/edit", RestaurantLive.Index, :edit
+
+    live "/restaurants/:id", RestaurantLive.Show, :show
+    live "/restaurants/:id/show/edit", RestaurantLive.Show, :edit
+
   end
 
   # Other scopes may use custom stacks.
