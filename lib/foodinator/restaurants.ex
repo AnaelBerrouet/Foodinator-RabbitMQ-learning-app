@@ -50,7 +50,7 @@ defmodule Foodinator.Restaurants do
 
   """
   def create_restaurant(attrs \\ %{}) do
-    %Restaurant{}
+    %Restaurant{items: %{}}
     |> Restaurant.changeset(attrs)
     |> Repo.insert()
   end

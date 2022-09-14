@@ -17,12 +17,23 @@
     <%= text_input f, :logo %>
     <%= error_tag f, :logo %>
   
-    <%= label f, :items %>
-    <%= text_input f, :items %>
-    <%= error_tag f, :items %>
-  
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
     </div>
   </.form>
+
+  <%= if @action == :edit do %>
+    <.form
+      let={f_item}
+      for={:new_item}
+      id="restaurant-item-form"
+      phx-target={@myself}
+      phx-change="validate-item"
+      phx-submit="add-item">
+      <%= label f_item, :value, "Item" %>
+      <%= text_input f_item, :value %>
+      <%= error_tag f_item, :value %>
+      <%= submit "Add" %>
+    </.form>
+  <% end %>
 </div>

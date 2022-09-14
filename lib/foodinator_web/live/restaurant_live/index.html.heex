@@ -28,7 +28,7 @@
       <tr id={"restaurant-#{restaurant.id}"}>
         <td><%= restaurant.name %></td>
         <td><%= restaurant.logo %></td>
-        <td><%= restaurant.items %></td>
+        <td><%= format_restaurant_items(restaurant.items) %></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.restaurant_show_path(@socket, :show, restaurant) %></span>

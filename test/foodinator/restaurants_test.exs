@@ -37,7 +37,9 @@ defmodule Foodinator.RestaurantsTest do
       restaurant = restaurant_fixture()
       update_attrs = %{items: %{}, logo: "some updated logo", name: "some updated name"}
 
-      assert {:ok, %Restaurant{} = restaurant} = Restaurants.update_restaurant(restaurant, update_attrs)
+      assert {:ok, %Restaurant{} = restaurant} =
+               Restaurants.update_restaurant(restaurant, update_attrs)
+
       assert restaurant.items == %{}
       assert restaurant.logo == "some updated logo"
       assert restaurant.name == "some updated name"
@@ -45,7 +47,10 @@ defmodule Foodinator.RestaurantsTest do
 
     test "update_restaurant/2 with invalid data returns error changeset" do
       restaurant = restaurant_fixture()
-      assert {:error, %Ecto.Changeset{}} = Restaurants.update_restaurant(restaurant, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Restaurants.update_restaurant(restaurant, @invalid_attrs)
+
       assert restaurant == Restaurants.get_restaurant!(restaurant.id)
     end
 

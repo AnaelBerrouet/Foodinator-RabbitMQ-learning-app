@@ -3,6 +3,8 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
 
   alias Foodinator.Restaurants
 
+  require Logger
+
   @impl true
   def update(%{restaurant: restaurant} = assigns, socket) do
     changeset = Restaurants.change_restaurant(restaurant)
@@ -25,6 +27,19 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
 
   def handle_event("save", %{"restaurant" => restaurant_params}, socket) do
     save_restaurant(socket, socket.assigns.action, restaurant_params)
+  end
+
+  def handle_event("validate-item", params, socket) do
+    Logger.debug("Validating item: #{inspect params}")
+    {:noreply, socket}
+  end
+
+  def handle_event("add-item", %{"new_item" => %{"value" => item}}, %{assigns: %{restaurant: restaurant}} = socket) do
+
+    items_new = Map.put_new(restaurant.items, UUID.uuid4(), item)
+    Logger.debug("Items New: #{inspect items_new}")
+
+    save_restaurant(socket, socket.assigns.action, %{items: items_new})
   end
 
   defp save_restaurant(socket, :edit, restaurant_params) do

@@ -14,6 +14,6 @@ defmodule Foodinator.Restaurants.Restaurant do
   def changeset(restaurant, attrs) do
     restaurant
     |> cast(attrs, [:name, :logo, :items])
-    |> validate_required([:name, :logo, :items])
+    |> validate_required([:name])
   end
 end

@@ -3,6 +3,8 @@ defmodule FoodinatorWeb.RestaurantLive.Show do
 
   alias Foodinator.Restaurants
 
+  require Logger
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -14,6 +16,18 @@ defmodule FoodinatorWeb.RestaurantLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:restaurant, Restaurants.get_restaurant!(id))}
+  end
+
+  def format_restaurant_items(nil), do: "N/A"
+  def format_restaurant_items(items) when is_map(items) do
+    Logger.debug("#{__MODULE__} | #{inspect items}")
+    if Enum.count(items) <= 0 do
+      "N/A"
+    else
+      Enum.reduce(items, "", fn {_k,v}, acc ->
+        acc <> v <> ","
+      end)
+    end
   end
 
   defp page_title(:show), do: "Show Restaurant"
