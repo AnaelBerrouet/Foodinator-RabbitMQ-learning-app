@@ -40,7 +40,7 @@ defmodule Foodinator.Orders.Message do
   def new(order, action) when action in ~w( confirm )a do
     %__MODULE__{
       order_id: order.id,
-      topic: "#{@general_topic}.#{order.id}.update"
+      topic: "#{@general_topic}.update"
     }
   end
 end

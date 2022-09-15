@@ -1,5 +1,4 @@
-defmodule Foodinator.Queues.OrderConsumers do
-
+defmodule Foodinator.Queues.OrderConsumer do
   alias Foodinator.Orders
   alias Foodinator.Orders.Order
   alias Foodinator.Queues.Topology
@@ -24,7 +23,9 @@ defmodule Foodinator.Queues.OrderConsumers do
           |> handle_message(meta.routing_key)
         rescue
           error ->
-            Logger.error("#{__MODULE__} | Failed to process message for restaurant #{restaurant_id} - message: #{payload} - error: #{inspect error}")
+            Logger.error(
+              "#{__MODULE__} | Failed to process message for restaurant #{restaurant_id} - message: #{payload} - error: #{inspect(error)}"
+            )
         end
 
         wait_for_messages(channel, restaurant_id)
@@ -44,7 +45,9 @@ defmodule Foodinator.Queues.OrderConsumers do
 
       AMQP.Basic.consume(channel, queue_name, nil, no_ack: true)
 
-      Logger.warn("#{__MODULE__} | [*] Restaurant #{restaurant_id} waiting for messages with binding_key `#{binding_key}`...")
+      Logger.warn(
+        "#{__MODULE__} | [*] Restaurant #{restaurant_id} waiting for messages with binding_key `#{binding_key}`..."
+      )
 
       wait_for_messages(channel, restaurant_id)
     end
@@ -60,13 +63,12 @@ defmodule Foodinator.Queues.OrderConsumers do
         # Publish order message for client to consume
         Orders.send_order_confirmation(order)
 
-
       {:error, %Ecto.Changeset{} = changeset} ->
         Logger.error("#{__MODULE__} | Order update error: #{changeset}")
     end
   end
+
   def handle_message(_order, "orders.1.request.new") do
     :ok
   end
-
 end

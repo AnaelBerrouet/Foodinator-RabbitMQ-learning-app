@@ -5,7 +5,7 @@ defmodule Foodinator.Queues.Topology do
   use Task
 
   alias Foodinator.Restaurants
-  alias Foodinator.Queues.OrderConsumers
+  alias Foodinator.Queues.OrderConsumer
 
   require Logger
 
@@ -26,11 +26,16 @@ defmodule Foodinator.Queues.Topology do
     :ok = AMQP.Exchange.declare(chan, dead_letter_exchange(), :topic, durable: true)
     :ok = AMQP.Exchange.declare(chan, retry_exchange(), :topic, durable: true)
 
+    # Instantiate the Restaurant Order Consumers
     for restaurant <- Restaurants.list_restaurants() do
       Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
-        OrderConsumers.launch_restaurant_order_consumer(restaurant.id)
+        OrderConsumer.launch_restaurant_order_consumer(restaurant.id)
       end)
     end
+
+    Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
+      ClientConsumer.launch_client_order_consumer()
+    end)
 
     :ok
   end
