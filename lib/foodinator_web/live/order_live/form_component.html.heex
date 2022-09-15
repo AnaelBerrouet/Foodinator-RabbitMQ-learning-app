@@ -17,17 +17,23 @@
     <%= text_input f, :address %>
     <%= error_tag f, :address %>
     
-    <%= if @action == :new && @selected_restaurant && @restaurants do %>
+    <%= if @action == :new do %>
     
       <%= label f, :restaurant_id %>
       <%= select f, :restaurant_id, restaurants_select(@restaurants), prompt: "Choose your restaurant", disabled: if @action==:edit, do: true, else: false%>
       <%= error_tag f, :restaurant_id %>
 
-      <%= label f, :item %>
-      <%= select f, :item, restaurant_item_select(@selected_restaurant) %>
-      <%= error_tag f, :item %>
+      <%= if @selected_restaurant do %>
 
-    <% else %>
+        <%= label f, :item %>
+        <%= select f, :item, restaurant_item_select(@selected_restaurant) %>
+        <%= error_tag f, :item %>
+
+      <% end %>
+      
+    <% end %>
+
+    <%= if @action == :edit do %>
 
       <%= label f, :restaurant %>
       <%= text_input f, :restaurant, value: @order.restaurant.name, disabled: true %>

@@ -7,6 +7,8 @@ defmodule Foodinator.Orders do
 
   alias Foodinator.Repo
   alias Foodinator.Orders.Order
+  alias Foodinator.Orders.Message
+  alias Foodinator.Queues.Publisher
 
   @doc """
   Returns the list of orders.
@@ -100,5 +102,17 @@ defmodule Foodinator.Orders do
   """
   def change_order(%Order{} = order, attrs \\ %{}) do
     Order.changeset(order, attrs)
+  end
+
+  def send_order_request(%Order{} = order) do
+    message = Message.request(order)
+
+    Publisher.publish_message(message, message.topic)
+  end
+
+  def send_order_confirmation(%Order{} = order) do
+    message = Message.confirm(order)
+
+    Publisher.publish_message(message, message.topic)
   end
 end

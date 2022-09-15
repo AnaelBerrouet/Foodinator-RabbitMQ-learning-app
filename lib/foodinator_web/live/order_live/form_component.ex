@@ -83,7 +83,10 @@ defmodule FoodinatorWeb.OrderLive.FormComponent do
 
   defp save_order(socket, :new, order_params) do
     case Orders.create_order(order_params) do
-      {:ok, _order} ->
+      {:ok, order} ->
+        # Publish order message for restaurant to consume
+        Orders.send_order_request(order)
+
         {:noreply,
          socket
          |> put_flash(:info, "Order created successfully")

@@ -73,3 +73,16 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# rabbitmq publishing
+rabbitmq_url = System.get_env("RABBITMQ_URL") || "amqp://guest:guest@localhost:5672"
+
+config :foodinator, rabbitmq_url: rabbitmq_url
+
+config :amqp,
+  connections: [
+    default: [url: rabbitmq_url]
+  ],
+  channels: [
+    default: [connection: :default]
+  ]

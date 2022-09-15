@@ -4,7 +4,7 @@ defmodule Foodinator.Orders.Order do
 
   alias Foodinator.Restaurants.Restaurant
 
-  @statuses ~w( initiated confirmed processing ready rejected canceled)
+  @statuses ~w( initiated processing ready rejected canceled)
 
   schema "orders" do
     field :name, :string

@@ -15,7 +15,11 @@ defmodule Foodinator.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Foodinator.PubSub},
       # Start the Endpoint (http/https)
-      FoodinatorWeb.Endpoint
+      FoodinatorWeb.Endpoint,
+      # Start Task Superviser for restaurant processes
+      {Task.Supervisor, name: MyApp.TaskSupervisor},
+      # Initialize the RabbitMQ Topology
+      Foodinator.Queues.Topology
       # Start a worker by calling: Foodinator.Worker.start_link(arg)
       # {Foodinator.Worker, arg}
     ]

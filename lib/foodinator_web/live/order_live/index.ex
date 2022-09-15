@@ -5,6 +5,8 @@ defmodule FoodinatorWeb.OrderLive.Index do
   alias Foodinator.Orders.Order
   alias Foodinator.Restaurants
 
+  require Logger
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :orders, list_orders())}
@@ -16,6 +18,8 @@ defmodule FoodinatorWeb.OrderLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
+    Logger.debug("#{__MODULE__} | Action: :edit")
+
     socket
     |> assign(:page_title, "Edit Order")
     |> assign(:order, Orders.get_order!(id))
@@ -23,6 +27,8 @@ defmodule FoodinatorWeb.OrderLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
+    Logger.debug("#{__MODULE__} | Action: :new")
+
     socket
     |> assign(:page_title, "New Order")
     |> assign(:order, %Order{})
@@ -30,6 +36,8 @@ defmodule FoodinatorWeb.OrderLive.Index do
   end
 
   defp apply_action(socket, :index, _params) do
+    Logger.debug("#{__MODULE__} | Action: :index")
+
     socket
     |> assign(:page_title, "Listing Orders")
     |> assign(:order, nil)
