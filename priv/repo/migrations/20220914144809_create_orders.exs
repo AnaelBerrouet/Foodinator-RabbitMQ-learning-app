@@ -5,13 +5,13 @@ defmodule Foodinator.Repo.Migrations.CreateOrders do
     create table(:orders) do
       add :name, :string
       add :address, :string
-      add :item, :integer
+      add :item, :uuid
       add :status, :string
-      add :restaurant, references(:restaurants, on_delete: :nothing)
+      add :restaurant_id, references(:restaurants, on_delete: :nothing)
 
       timestamps()
     end
 
-    create index(:orders, [:restaurant])
+    create index(:orders, [:restaurant_id])
   end
 end

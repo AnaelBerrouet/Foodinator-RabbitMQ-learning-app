@@ -30,14 +30,17 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
   end
 
   def handle_event("validate-item", params, socket) do
-    Logger.debug("Validating item: #{inspect params}")
+    Logger.debug("Validating item: #{inspect(params)}")
     {:noreply, socket}
   end
 
-  def handle_event("add-item", %{"new_item" => %{"value" => item}}, %{assigns: %{restaurant: restaurant}} = socket) do
-
+  def handle_event(
+        "add-item",
+        %{"new_item" => %{"value" => item}},
+        %{assigns: %{restaurant: restaurant}} = socket
+      ) do
     items_new = Map.put_new(restaurant.items, UUID.uuid4(), item)
-    Logger.debug("Items New: #{inspect items_new}")
+    Logger.debug("Items New: #{inspect(items_new)}")
 
     save_restaurant(socket, socket.assigns.action, %{items: items_new})
   end

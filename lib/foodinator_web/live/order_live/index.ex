@@ -3,6 +3,7 @@ defmodule FoodinatorWeb.OrderLive.Index do
 
   alias Foodinator.Orders
   alias Foodinator.Orders.Order
+  alias Foodinator.Restaurants
 
   @impl true
   def mount(_params, _session, socket) do
@@ -18,12 +19,14 @@ defmodule FoodinatorWeb.OrderLive.Index do
     socket
     |> assign(:page_title, "Edit Order")
     |> assign(:order, Orders.get_order!(id))
+    |> assign(:restaurants, nil)
   end
 
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Order")
     |> assign(:order, %Order{})
+    |> assign(:restaurants, Restaurants.list_restaurants())
   end
 
   defp apply_action(socket, :index, _params) do

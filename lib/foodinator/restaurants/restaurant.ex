@@ -3,9 +3,9 @@ defmodule Foodinator.Restaurants.Restaurant do
   import Ecto.Changeset
 
   schema "restaurants" do
-    field :items, :map
-    field :logo, :string
     field :name, :string
+    field :logo, :string
+    field :items, :map
 
     timestamps()
   end

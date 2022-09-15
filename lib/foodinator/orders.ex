@@ -4,8 +4,8 @@ defmodule Foodinator.Orders do
   """
 
   import Ecto.Query, warn: false
-  alias Foodinator.Repo
 
+  alias Foodinator.Repo
   alias Foodinator.Orders.Order
 
   @doc """
@@ -18,7 +18,7 @@ defmodule Foodinator.Orders do
 
   """
   def list_orders do
-    Repo.all(Order)
+    Repo.all(Order, preload: :restaurant)
   end
 
   @doc """
@@ -35,7 +35,7 @@ defmodule Foodinator.Orders do
       ** (Ecto.NoResultsError)
 
   """
-  def get_order!(id), do: Repo.get!(Order, id)
+  def get_order!(id), do: Repo.get!(Order, id) |> Repo.preload(:restaurant)
 
   @doc """
   Creates a order.
@@ -50,7 +50,7 @@ defmodule Foodinator.Orders do
 
   """
   def create_order(attrs \\ %{}) do
-    %Order{}
+    %Order{status: "initiated"}
     |> Order.changeset(attrs)
     |> Repo.insert()
   end

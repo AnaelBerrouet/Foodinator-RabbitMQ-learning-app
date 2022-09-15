@@ -8,6 +8,7 @@
       title={@page_title}
       action={@live_action}
       order={@order}
+      restaurants={if @restaurants, do: @restaurants, else: nil}
       return_to={Routes.order_index_path(@socket, :index)}
     />
   </.modal>
@@ -29,6 +30,7 @@
       <tr id={"order-#{order.id}"}>
         <td><%= order.name %></td>
         <td><%= order.address %></td>
+        <td><%= order.restaurant_id %></td>
         <td><%= order.item %></td>
         <td><%= order.status %></td>
 

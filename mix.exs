@@ -33,6 +33,7 @@ defmodule Foodinator.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:amqp, "~> 3.1"},
       {:phoenix, "~> 1.6.12"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},

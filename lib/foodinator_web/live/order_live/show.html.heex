@@ -26,8 +26,13 @@
   </li>
 
   <li>
+    <strong>Restaurant:</strong>
+    <%= @order.restaurant.name %>
+  </li>
+
+  <li>
     <strong>Item:</strong>
-    <%= @order.item %>
+    <%= @order.restaurant.items[@order.item] %>
   </li>
 
   <li>
