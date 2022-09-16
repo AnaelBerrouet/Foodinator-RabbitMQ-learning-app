@@ -20,7 +20,7 @@ defmodule Foodinator.Orders do
 
   """
   def list_orders do
-    Repo.all(Order, preload: :restaurant)
+    Repo.all(Order) |> Repo.preload(:restaurant)
   end
 
   @doc """
@@ -124,6 +124,12 @@ defmodule Foodinator.Orders do
 
   def send_cancelation_acknowledgement(%Order{} = order) do
     message = Message.ackowledge_cancelation(order)
+
+    Publisher.publish_message(message, message.topic)
+  end
+
+  def send_order_ready(%Order{} = order) do
+    message = Message.ready(order)
 
     Publisher.publish_message(message, message.topic)
   end

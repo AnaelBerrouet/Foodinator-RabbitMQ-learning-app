@@ -64,16 +64,23 @@ defmodule Foodinator.Queues.OrderConsumer do
     |> List.last()
   end
 
-  def handle_message(%Order{status: "initiated"} = order, "new") do
-    accept_order_request = :rand.uniform(2) == 1
+  defp handle_message(%Order{status: "initiated"} = order, "new") do
+    Process.sleep(4000)
 
-    new_status = if accept_order_request, do: "processing", else: "rejected"
+    reject_order_request = :rand.uniform(5) == 1
+    new_status = if reject_order_request, do: "rejected", else: "processing"
 
     case Orders.update_order(order, %{status: new_status}) do
       {:ok, order} ->
         # Publish order message for client to consume
         if order.status == "processing" do
           Orders.send_order_confirmation(order)
+          # Prepare food
+          Logger.debug("#{__MODULE__} | Restaurant now processing order: #{order.id}")
+
+          Task.async(fn ->
+            process_order(order)
+          end)
         else
           Orders.send_order_rejection(order)
         end
@@ -83,7 +90,9 @@ defmodule Foodinator.Queues.OrderConsumer do
     end
   end
 
-  def handle_message(order, "cancel") do
+  defp handle_message(order, "cancel") do
+    Process.sleep(4000)
+
     case Orders.update_order(order, %{status: "canceled"}) do
       {:ok, order} ->
         # Publish order message for client to consume
@@ -94,9 +103,27 @@ defmodule Foodinator.Queues.OrderConsumer do
     end
   end
 
-  def handle_message(order, routing_key),
+  defp handle_message(order, routing_key),
     do:
       Logger.error(
         "#{__MODULE__} | Unknown message and order status found. Order: #{inspect(order)}, Routing Key: #{routing_key}"
       )
+
+  defp process_order(%Order{status: "processing"} = order) do
+    {timeout, _} = Float.to_string(:rand.uniform() * 1000 * 30) |> Integer.parse()
+    Process.sleep(timeout)
+
+    case Orders.update_order(order, %{status: "ready"}) do
+      {:ok, order} ->
+        # Publish order message for client to consume
+        Orders.send_order_ready(order)
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        Logger.error("#{__MODULE__} | Order update error: #{changeset}")
+    end
+
+    :ok
+  end
+
+  defp process_order(_), do: :ok
 end

@@ -38,4 +38,5 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 #### Creating schemas
 mix phx.gen.live Restaurants Restaurant restaurants name:string logo:string items:map
-mix phx.gen.live Orders Order orders name:string address:string restaurant:references:restaurants item:integer status:string
+mix phx.gen.live Orders Order orders name:string address:string restaurant_id:references:restaurants item:integer status:string
+mix phx.gen.live Events Event events action:string order_id:references:orders

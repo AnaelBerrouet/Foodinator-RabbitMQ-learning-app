@@ -31,6 +31,10 @@ defmodule Foodinator.Orders.Message do
     new(order, :ack_cancel)
   end
 
+  def ready(%Order{} = order) do
+    new(order, :ready)
+  end
+
   # Client->Restaurant messages
   defp new(order, :request) do
     %__MODULE__{
@@ -65,6 +69,13 @@ defmodule Foodinator.Orders.Message do
     %__MODULE__{
       order_id: order.id,
       topic: "#{@general_topic}.update.canceled"
+    }
+  end
+
+  defp new(order, :ready) do
+    %__MODULE__{
+      order_id: order.id,
+      topic: "#{@general_topic}.update.completed"
     }
   end
 end

@@ -73,4 +73,6 @@ defmodule FoodinatorWeb.OrderLive.Index do
   defp list_orders do
     Orders.list_orders()
   end
+
+  defp status_pill(status), do: "pill-#{status}"
 end

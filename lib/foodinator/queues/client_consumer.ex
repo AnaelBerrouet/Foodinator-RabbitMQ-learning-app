@@ -50,17 +50,7 @@ defmodule Foodinator.Queues.ClientConsumer do
     end
   end
 
-  def handle_message(order, "orders.update.confirmed") do
-    Process.sleep(2000)
-    FoodinatorWeb.Endpoint.broadcast("order:#{order.id}", "update", "confirmed")
-  end
-
-  def handle_message(order, "orders.update.rejected") do
-    Process.sleep(2000)
-    FoodinatorWeb.Endpoint.broadcast("order:#{order.id}", "update", "rejected")
-  end
-
-  def handle_message(order, "orders.update.canceled") do
-    FoodinatorWeb.Endpoint.broadcast("order:#{order.id}", "update", "canceled")
+  def handle_message(order, "orders.update." <> action) do
+    FoodinatorWeb.Endpoint.broadcast("order:#{order.id}", "update", action)
   end
 end

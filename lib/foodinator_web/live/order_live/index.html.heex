@@ -17,8 +17,10 @@
 <table>
   <thead>
     <tr>
+      <th>Order #</th>
       <th>Name</th>
       <th>Address</th>
+      <th>Restaurant</th>
       <th>Item</th>
       <th>Status</th>
 
@@ -28,11 +30,12 @@
   <tbody id="orders">
     <%= for order <- @orders do %>
       <tr id={"order-#{order.id}"}>
+        <td><%= order.id %></td>
         <td><%= order.name %></td>
         <td><%= order.address %></td>
-        <td><%= order.restaurant_id %></td>
-        <td><%= order.item %></td>
-        <td><%= order.status %></td>
+        <td><%= order.restaurant.name %></td>
+        <td><%= order.restaurant.items[order.item] %></td>
+        <td><div class={status_pill(order.status)}><%= order.status %></div></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.order_show_path(@socket, :show, order) %></span>

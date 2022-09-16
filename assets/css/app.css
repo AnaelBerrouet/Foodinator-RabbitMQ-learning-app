@@ -99,6 +99,42 @@
   animation: 0.2s ease-out 0s normal forwards 1 fade-out-keys;
 }
 
+.pill-initiated {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  background-color: gray;
+  color: black;
+}
+
+.pill-processing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  background-color: orange;
+  color: black;
+}
+
+.pill-rejected {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  background-color: red;
+  color: white;
+}
+
+.pill-ready {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  background-color: green;
+  color: white;
+}
+
 @keyframes fade-in-scale-keys{
   0% { scale: 0.95; opacity: 0; }
   100% { scale: 1.0; opacity: 1; }
