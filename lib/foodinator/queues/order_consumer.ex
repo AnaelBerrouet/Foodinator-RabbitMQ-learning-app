@@ -16,11 +16,16 @@ defmodule Foodinator.Queues.OrderConsumer do
         )
 
         try do
+          Logger.debug("Decoding JSON payload...")
           {:ok, %{"order_id" => order_id}} = Jason.decode(payload)
+
+          action = extract_action_from_key(meta.routing_key)
+
+          Logger.debug("Fetching message and calling handle_message...")
 
           order_id
           |> Orders.get_order!()
-          |> handle_message(meta.routing_key)
+          |> handle_message(action)
         rescue
           error ->
             Logger.error(
@@ -53,7 +58,13 @@ defmodule Foodinator.Queues.OrderConsumer do
     end
   end
 
-  def handle_message(%Order{status: "initiated"} = order, "orders.1.request.new") do
+  defp extract_action_from_key(routing_key) do
+    routing_key
+    |> String.split(".")
+    |> List.last()
+  end
+
+  def handle_message(%Order{status: "initiated"} = order, "new") do
     accept_order_request = :rand.uniform(2) == 1
 
     new_status = if accept_order_request, do: "processing", else: "rejected"
@@ -61,14 +72,31 @@ defmodule Foodinator.Queues.OrderConsumer do
     case Orders.update_order(order, %{status: new_status}) do
       {:ok, order} ->
         # Publish order message for client to consume
-        Orders.send_order_confirmation(order)
+        if order.status == "processing" do
+          Orders.send_order_confirmation(order)
+        else
+          Orders.send_order_rejection(order)
+        end
 
       {:error, %Ecto.Changeset{} = changeset} ->
         Logger.error("#{__MODULE__} | Order update error: #{changeset}")
     end
   end
 
-  def handle_message(_order, "orders.1.request.new") do
-    :ok
+  def handle_message(order, "cancel") do
+    case Orders.update_order(order, %{status: "canceled"}) do
+      {:ok, order} ->
+        # Publish order message for client to consume
+        Orders.send_cancelation_acknowledgement(order)
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        Logger.error("#{__MODULE__} | Order update error: #{changeset}")
+    end
   end
+
+  def handle_message(order, routing_key),
+    do:
+      Logger.error(
+        "#{__MODULE__} | Unknown message and order status found. Order: #{inspect(order)}, Routing Key: #{routing_key}"
+      )
 end

@@ -23,24 +23,48 @@ defmodule Foodinator.Orders.Message do
     new(order, :confirm)
   end
 
-  def new(order, :request) do
+  def reject(%Order{} = order) do
+    new(order, :reject)
+  end
+
+  def ackowledge_cancelation(%Order{} = order) do
+    new(order, :ack_cancel)
+  end
+
+  # Client->Restaurant messages
+  defp new(order, :request) do
     %__MODULE__{
       order_id: order.id,
       topic: "#{@general_topic}.#{order.restaurant_id}.request.new"
     }
   end
 
-  def new(order, :cancel) do
+  # Restaurant->Client messages
+  defp new(order, :cancel) do
     %__MODULE__{
       order_id: order.id,
       topic: "#{@general_topic}.#{order.restaurant_id}.request.cancel"
     }
   end
 
-  def new(order, action) when action in ~w( confirm )a do
+  defp new(order, :confirm) do
     %__MODULE__{
       order_id: order.id,
-      topic: "#{@general_topic}.update"
+      topic: "#{@general_topic}.update.confirmed"
+    }
+  end
+
+  defp new(order, :reject) do
+    %__MODULE__{
+      order_id: order.id,
+      topic: "#{@general_topic}.update.rejected"
+    }
+  end
+
+  defp new(order, :ack_cancel) do
+    %__MODULE__{
+      order_id: order.id,
+      topic: "#{@general_topic}.update.canceled"
     }
   end
 end

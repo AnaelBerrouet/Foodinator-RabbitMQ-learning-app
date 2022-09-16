@@ -2,6 +2,7 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
   use FoodinatorWeb, :live_component
 
   alias Foodinator.Restaurants
+  alias Foodinator.Queues.OrderConsumer
 
   require Logger
 
@@ -60,7 +61,12 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
 
   defp save_restaurant(socket, :new, restaurant_params) do
     case Restaurants.create_restaurant(restaurant_params) do
-      {:ok, _restaurant} ->
+      {:ok, restaurant} ->
+        # Launch the new restaurant's order consumer process supervised by the `Task.Supervisor`
+        Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
+          OrderConsumer.launch_restaurant_order_consumer(restaurant.id)
+        end)
+
         {:noreply,
          socket
          |> put_flash(:info, "Restaurant created successfully")

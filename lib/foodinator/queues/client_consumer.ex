@@ -37,7 +37,7 @@ defmodule Foodinator.Queues.ClientConsumer do
           durable: true
         )
 
-      binding_key = "#{@general_topic}.update"
+      binding_key = "#{@general_topic}.update.*"
       AMQP.Queue.bind(channel, queue_name, Topology.main_exchange(), routing_key: binding_key)
 
       AMQP.Basic.consume(channel, queue_name, nil, no_ack: true)
@@ -50,7 +50,17 @@ defmodule Foodinator.Queues.ClientConsumer do
     end
   end
 
-  def handle_message(_order, "orders.update") do
-    :ok
+  def handle_message(order, "orders.update.confirmed") do
+    Process.sleep(2000)
+    FoodinatorWeb.Endpoint.broadcast("order:#{order.id}", "update", "confirmed")
+  end
+
+  def handle_message(order, "orders.update.rejected") do
+    Process.sleep(2000)
+    FoodinatorWeb.Endpoint.broadcast("order:#{order.id}", "update", "rejected")
+  end
+
+  def handle_message(order, "orders.update.canceled") do
+    FoodinatorWeb.Endpoint.broadcast("order:#{order.id}", "update", "canceled")
   end
 end

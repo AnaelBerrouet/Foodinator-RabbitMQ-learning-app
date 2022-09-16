@@ -2,7 +2,7 @@ defmodule FoodinatorWeb.OrderLive.FormComponent do
   use FoodinatorWeb, :live_component
 
   alias Foodinator.Orders
-  # alias Foodinator.Restaurants
+  alias Phoenix.PubSub
 
   require Logger
 
@@ -86,6 +86,8 @@ defmodule FoodinatorWeb.OrderLive.FormComponent do
       {:ok, order} ->
         # Publish order message for restaurant to consume
         Orders.send_order_request(order)
+        # Subscribe parent liveview to PubSub messages for this new order
+        PubSub.subscribe(Foodinator.PubSub, "order:#{order.id}")
 
         {:noreply,
          socket

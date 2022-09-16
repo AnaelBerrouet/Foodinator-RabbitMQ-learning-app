@@ -6,6 +6,7 @@ defmodule Foodinator.Queues.Topology do
 
   alias Foodinator.Restaurants
   alias Foodinator.Queues.OrderConsumer
+  alias Foodinator.Queues.ClientConsumer
 
   require Logger
 

@@ -115,4 +115,16 @@ defmodule Foodinator.Orders do
 
     Publisher.publish_message(message, message.topic)
   end
+
+  def send_order_rejection(%Order{} = order) do
+    message = Message.reject(order)
+
+    Publisher.publish_message(message, message.topic)
+  end
+
+  def send_cancelation_acknowledgement(%Order{} = order) do
+    message = Message.ackowledge_cancelation(order)
+
+    Publisher.publish_message(message, message.topic)
+  end
 end

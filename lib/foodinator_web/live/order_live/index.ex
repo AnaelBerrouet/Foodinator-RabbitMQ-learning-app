@@ -4,12 +4,19 @@ defmodule FoodinatorWeb.OrderLive.Index do
   alias Foodinator.Orders
   alias Foodinator.Orders.Order
   alias Foodinator.Restaurants
+  alias Phoenix.PubSub
 
   require Logger
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :orders, list_orders())}
+    orders = list_orders()
+    # Subscribe to PubSub messages for all orders on page
+    Enum.each(orders, fn order ->
+      PubSub.subscribe(Foodinator.PubSub, "order:#{order.id}")
+    end)
+
+    {:ok, assign(socket, :orders, orders)}
   end
 
   @impl true
@@ -49,6 +56,18 @@ defmodule FoodinatorWeb.OrderLive.Index do
     {:ok, _} = Orders.delete_order(order)
 
     {:noreply, assign(socket, :orders, list_orders())}
+  end
+
+  @impl true
+  def handle_info(%{topic: "order:" <> order_id, payload: action}, socket) do
+    Logger.debug(
+      "#{__MODULE__} | Received PubSub message for topic: `order:#{order_id}` with payload: #{action}"
+    )
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Your order has been #{action}!")
+     |> assign(:orders, list_orders())}
   end
 
   defp list_orders do
