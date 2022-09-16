@@ -17,7 +17,7 @@ defmodule Foodinator.Application do
       # Start the Endpoint (http/https)
       FoodinatorWeb.Endpoint,
       # Start Task Superviser for restaurant processes
-      {Task.Supervisor, name: MyApp.TaskSupervisor},
+      {Task.Supervisor, name: Foodinator.TaskSupervisor},
       # Initialize the RabbitMQ Topology
       Foodinator.Queues.Topology
       # Start a worker by calling: Foodinator.Worker.start_link(arg)

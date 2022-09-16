@@ -7,6 +7,7 @@ defmodule Foodinator.Queues.Topology do
   alias Foodinator.Restaurants
   alias Foodinator.Queues.OrderConsumer
   alias Foodinator.Queues.ClientConsumer
+  alias Foodinator.Queues.EventConsumer
 
   require Logger
 
@@ -29,13 +30,17 @@ defmodule Foodinator.Queues.Topology do
 
     # Instantiate the Restaurant Order Consumers
     for restaurant <- Restaurants.list_restaurants() do
-      Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
-        OrderConsumer.launch_restaurant_order_consumer(restaurant.id)
+      Task.Supervisor.async(Foodinator.TaskSupervisor, fn ->
+        OrderConsumer.launch_restaurant_order_consumer(restaurant.id, restaurant.name)
       end)
     end
 
-    Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
+    Task.Supervisor.async(Foodinator.TaskSupervisor, fn ->
       ClientConsumer.launch_client_order_consumer()
+    end)
+
+    Task.Supervisor.async(Foodinator.TaskSupervisor, fn ->
+      EventConsumer.launch_event_consumer()
     end)
 
     :ok

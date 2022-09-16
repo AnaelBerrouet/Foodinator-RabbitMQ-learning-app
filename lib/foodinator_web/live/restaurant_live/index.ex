@@ -25,7 +25,7 @@ defmodule FoodinatorWeb.RestaurantLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Restaurant")
-    |> assign(:restaurant, %Restaurant{})
+    |> assign(:restaurant, %Restaurant{items: %{}})
   end
 
   defp apply_action(socket, :index, _params) do

@@ -37,7 +37,21 @@ defmodule Foodinator.Queues.OrderConsumer do
     end
   end
 
-  def launch_restaurant_order_consumer(restaurant_id) do
+  def launch_restaurant_order_consumer(restaurant_id, restaurant_name) do
+    Logger.info("#{__MODULE__} | Launching #{restaurant_name}...")
+
+    try do
+      channel = setup_queue(restaurant_id, restaurant_name)
+      wait_for_messages(channel, restaurant_id)
+    rescue
+      error ->
+        Logger.error(
+          "#{__MODULE__} | Launch failed for restaurant ##{restaurant_id} (#{restaurant_name}) - error: #{inspect(error)}"
+        )
+    end
+  end
+
+  def setup_queue(restaurant_id, restaurant_name) do
     with {:ok, channel} <- AMQP.Application.get_channel(@channel) do
       {:ok, %{queue: queue_name}} =
         AMQP.Queue.declare(channel, "",
@@ -46,15 +60,19 @@ defmodule Foodinator.Queues.OrderConsumer do
         )
 
       binding_key = "#{@general_topic}.#{restaurant_id}.request.*"
-      AMQP.Queue.bind(channel, queue_name, Topology.main_exchange(), routing_key: binding_key)
 
-      AMQP.Basic.consume(channel, queue_name, nil, no_ack: true)
+      :ok =
+        AMQP.Queue.bind(channel, queue_name, Topology.main_exchange(), routing_key: binding_key)
+
+      {:ok, _} = AMQP.Basic.consume(channel, queue_name, nil, no_ack: true)
 
       Logger.warn(
-        "#{__MODULE__} | [*] Restaurant #{restaurant_id} waiting for messages with binding_key `#{binding_key}`..."
+        "#{__MODULE__} | [*] Restaurant ##{restaurant_id} (#{restaurant_name}) waiting for messages with binding_key `#{binding_key}`..."
       )
 
-      wait_for_messages(channel, restaurant_id)
+      channel
+    else
+      error -> Logger.error("#{error}")
     end
   end
 

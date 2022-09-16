@@ -26,8 +26,10 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("save", %{"restaurant" => restaurant_params}, socket) do
-    save_restaurant(socket, socket.assigns.action, restaurant_params)
+  def handle_event("save", %{"restaurant" => params}, socket) do
+    Logger.debug("Restaurant Params: #{inspect(params)}")
+    params = Map.put(params, "items", Jason.decode!(params["items"]))
+    save_restaurant(socket, socket.assigns.action, params)
   end
 
   def handle_event("validate-item", params, socket) do
@@ -38,12 +40,16 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
   def handle_event(
         "add-item",
         %{"new_item" => %{"value" => item}},
-        %{assigns: %{restaurant: restaurant}} = socket
+        %{assigns: %{restaurant: restaurant, changeset: changeset}} = socket
       ) do
-    items_new = Map.put_new(restaurant.items, UUID.uuid4(), item)
-    Logger.debug("Items New: #{inspect(items_new)}")
+    changeset_items = Map.get(changeset.changes, :items, %{})
+    current_items = Map.merge(restaurant.items, changeset_items)
+    items_new = Map.put(current_items, UUID.uuid4(), item)
 
-    save_restaurant(socket, socket.assigns.action, %{items: items_new})
+    new_changeset = Ecto.Changeset.put_change(changeset, :items, items_new)
+
+    Logger.debug("New Changeset: #{inspect(new_changeset)}")
+    {:noreply, assign(socket, :changeset, new_changeset)}
   end
 
   defp save_restaurant(socket, :edit, restaurant_params) do
@@ -60,11 +66,13 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
   end
 
   defp save_restaurant(socket, :new, restaurant_params) do
+    Logger.warn("Creating restaurant...")
+
     case Restaurants.create_restaurant(restaurant_params) do
       {:ok, restaurant} ->
         # Launch the new restaurant's order consumer process supervised by the `Task.Supervisor`
-        Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
-          OrderConsumer.launch_restaurant_order_consumer(restaurant.id)
+        Task.Supervisor.async_nolink(Foodinator.TaskSupervisor, fn ->
+          OrderConsumer.launch_restaurant_order_consumer(restaurant.id, restaurant.name)
         end)
 
         {:noreply,
@@ -74,6 +82,20 @@ defmodule FoodinatorWeb.RestaurantLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def format_restaurant_items(nil), do: "N/A"
+
+  def format_restaurant_items(items) when is_map(items) do
+    Logger.debug("#{__MODULE__} | #{inspect(items)}")
+
+    if Enum.count(items) <= 0 do
+      "N/A"
+    else
+      Enum.reduce(items, "", fn {_k, v}, acc ->
+        acc <> v <> ","
+      end)
     end
   end
 end

@@ -1,0 +1,26 @@
+<h1>Listing Events</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Order</th>
+      <th>Process</th>
+      <th>Action</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="events">
+    <%= for event <- @events do %>
+      <tr id={"event-#{event.id}"}>
+        <td><%= live_redirect event.order_id, to: Routes.order_show_path(@socket, :show, event.order) %></td>
+        <td><%= event.process %></td>
+        <td><%= event.action %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.event_show_path(@socket, :show, event) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: event.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

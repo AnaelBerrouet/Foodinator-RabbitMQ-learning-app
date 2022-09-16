@@ -32,6 +32,9 @@ defmodule FoodinatorWeb.Router do
 
     live "/orders/:id", OrderLive.Show, :show
     live "/orders/:id/show/edit", OrderLive.Show, :edit
+
+    live "/events", EventLive.Index, :index
+    live "/events/:id", EventLive.Show, :show
   end
 
   # Other scopes may use custom stacks.

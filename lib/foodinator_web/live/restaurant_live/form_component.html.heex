@@ -16,24 +16,28 @@
     <%= label f, :logo %>
     <%= text_input f, :logo %>
     <%= error_tag f, :logo %>
+
+    <%= label f, :items %>
+    <%= hidden_input f, :items, value: Jason.encode!(Map.get(@changeset.changes, :items, @restaurant.items))  %>
+
+    <%= text_input f, :items_list, value: format_restaurant_items(Map.get(@changeset.changes, :items, @restaurant.items)), disabled: true %>
   
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
     </div>
   </.form>
 
-  <%= if @action == :edit do %>
-    <.form
-      let={f_item}
-      for={:new_item}
-      id="restaurant-item-form"
-      phx-target={@myself}
-      phx-change="validate-item"
-      phx-submit="add-item">
-      <%= label f_item, :value, "Item" %>
-      <%= text_input f_item, :value %>
-      <%= error_tag f_item, :value %>
-      <%= submit "Add" %>
-    </.form>
-  <% end %>
+  <.form
+    let={f_item}
+    for={:new_item}
+    id="restaurant-item-form"
+    phx-target={@myself}
+    phx-change="validate-item"
+    phx-submit="add-item">
+    <%= label f_item, :value, "Add Item" %>
+    <%= text_input f_item, :value %>
+    <%= error_tag f_item, :value %>
+    <%= submit "Add" %>
+  </.form>
+
 </div>

@@ -1,0 +1,26 @@
+<h1>Show Event</h1>
+
+<ul>
+  <li>
+    <strong>Event ID:</strong>
+    <%= @event.id %>
+  </li>
+
+  <li>
+    <strong>Process:</strong>
+    <%= @event.process %>
+  </li>
+
+  <li>
+    <strong>Action:</strong>
+    <%= @event.action %>
+  </li>
+
+  <li>
+    <strong>Order:</strong>
+    <%= live_redirect @event.order_id, to: Routes.order_show_path(@socket, :show, @event.order) %>
+  </li>
+
+</ul>
+
+<span><%= live_redirect "Back", to: Routes.event_index_path(@socket, :index) %></span>
