@@ -6,6 +6,8 @@ defmodule Foodinator.Events do
   import Ecto.Query, warn: false
   alias Foodinator.Repo
   alias Foodinator.Events.Event
+  alias Foodinator.Events.Message
+  alias Foodinator.Queues.Publisher
 
   @doc """
   Returns the list of events.
@@ -99,5 +101,14 @@ defmodule Foodinator.Events do
   """
   def change_event(%Event{} = event, attrs \\ %{}) do
     Event.changeset(event, attrs)
+  end
+
+  def send_event_to_dw(%Event{} = event) do
+    message =
+      event
+      |> Repo.preload(:order)
+      |> Message.store_order_event()
+
+    Publisher.publish_message(message, message.topic)
   end
 end

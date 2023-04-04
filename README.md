@@ -40,3 +40,9 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 mix phx.gen.live Restaurants Restaurant restaurants name:string logo:string items:map
 mix phx.gen.live Orders Order orders name:string address:string restaurant_id:references:restaurants item:integer status:string
 mix phx.gen.live Events Event events process:string action:string order_id:references:orders
+
+#### Notes
+- Should [install](https://clickhouse.com/docs/en/install) clickhouse binary for client and server
+- Clickhouse RabbitMQ [docs](https://clickhouse.com/docs/en/engines/table-engines/integrations/rabbitmq)
+- Clickhouse [Docker image](https://hub.docker.com/r/clickhouse/clickhouse-server)
+- Reference github [project](https://github.com/pachico/demo-clickhouse-rabbitmq-engine)

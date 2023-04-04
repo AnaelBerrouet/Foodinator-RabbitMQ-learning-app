@@ -20,6 +20,7 @@ defmodule FoodinatorWeb.OrderLive.Show do
      |> assign(:order, Orders.get_order!(id))}
   end
 
+  @impl true
   def handle_info(%{topic: "order:" <> order_id, payload: action}, socket) do
     {:noreply,
      socket

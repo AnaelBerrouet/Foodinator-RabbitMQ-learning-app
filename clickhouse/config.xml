@@ -1,0 +1,12 @@
+<clickhouse>
+    <rabbitmq>
+        <username>guest</username>
+        <password>guest</password>
+    </rabbitmq>
+</clickhouse>
+<!-- <yandex>
+    <rabbitmq>
+        <username>guest</username>
+        <password>guest</password>
+    </rabbitmq>
+</yandex> -->

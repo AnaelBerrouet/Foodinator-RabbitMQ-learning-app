@@ -47,7 +47,8 @@ defmodule Foodinator.Queues.EventConsumer do
 
   def handle_message(order_id, "orders.update." <> _ = routing_key) do
     case Events.create_event(%{order_id: order_id, action: routing_key, process: "Restaurant"}) do
-      {:ok, _event} ->
+      {:ok, event} ->
+        Events.send_event_to_dw(event)
         FoodinatorWeb.Endpoint.broadcast("events", "update", nil)
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -59,7 +60,8 @@ defmodule Foodinator.Queues.EventConsumer do
 
   def handle_message(order_id, "orders." <> _ = routing_key) do
     case Events.create_event(%{order_id: order_id, action: routing_key, process: "Client"}) do
-      {:ok, _event} ->
+      {:ok, event} ->
+        Events.send_event_to_dw(event)
         FoodinatorWeb.Endpoint.broadcast("events", "update", nil)
 
       {:error, %Ecto.Changeset{} = changeset} ->

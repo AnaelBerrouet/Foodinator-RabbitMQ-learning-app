@@ -100,6 +100,7 @@ defmodule Foodinator.Queues.OrderConsumer do
             process_order(order)
           end)
         else
+          Logger.debug("#{__MODULE__} | Restaurant rejected order: #{order.id}")
           Orders.send_order_rejection(order)
         end
 

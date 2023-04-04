@@ -32,3 +32,8 @@ foodinator-*.tar
 npm-debug.log
 /assets/node_modules/
 
+/clickhouse_exe
+
+/clickhouse/db
+/clickhouse/db/
+/clickhouse/db/**/*
