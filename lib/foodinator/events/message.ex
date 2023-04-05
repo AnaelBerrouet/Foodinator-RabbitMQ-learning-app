@@ -6,13 +6,30 @@ defmodule Foodinator.Events.Message do
 
   @general_topic "events"
 
-  @derive {Jason.Encoder, only: [:event_id, :action, :process, :order_id, :restaurant_id, :order_status, :timestamp]}
-  defstruct [:event_id, :action, :process, :order_id, :restaurant_id, :order_status, :topic, :timestamp]
+  @derive {Jason.Encoder,
+           only: [
+             :event_id,
+             :action,
+             :process,
+             :order_id,
+             :restaurant_id,
+             :order_status,
+             :timestamp
+           ]}
+  defstruct [
+    :event_id,
+    :action,
+    :process,
+    :order_id,
+    :restaurant_id,
+    :order_status,
+    :topic,
+    :timestamp
+  ]
 
   def store_order_event(%Event{order: %Order{}} = event) do
     new(event, :store_order_event)
   end
-
 
   defp new(event, :store_order_event) do
     %__MODULE__{

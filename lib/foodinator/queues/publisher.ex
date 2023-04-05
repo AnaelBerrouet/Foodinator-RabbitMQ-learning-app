@@ -19,6 +19,7 @@ defmodule Foodinator.Queues.Publisher do
              message,
              @publish_opts
            ) do
+      Logger.info("#{__MODULE__} | published message: #{inspect(message)} on topic: #{topic}")
       :ok
     else
       error ->
